@@ -1,0 +1,18 @@
+<%- include('partials/header') -%>
+  <div class="content">
+    <h3>Welcome, <%= fullName %></h3>
+    <h1>Your posts</h1>
+    <div class="section-content">
+      <% if(posts.length === 0) { %>
+        <p>You have no recent posts, to create a new post, click <a href="/compose">here.</a></p>
+      <% } else { %>
+        <%  posts.forEach((post) => { %>
+          <div class="post-item">
+            <h3><%=post.title%></h3>
+            <p><%=post.truncatedContent%><a href="/posts/<%=post.id%>">read more</a> </p>
+          </div>
+        <%  }); %>
+      <% } %>
+    </div>
+  </div>
+<%- include('partials/footer') -%>

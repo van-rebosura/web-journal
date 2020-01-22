@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+
+<head>
+  <meta charset="utf-8">
+  <title>Blogger login</title>
+  <!-- google fonts -->
+  <link href="https://fonts.googleapis.com/css?family=Kreon|Poppins|Ultra&display=swap" rel="stylesheet">
+  <!-- custom css -->
+  <link rel="stylesheet" href="styles/login.css">
+</head>
+
+<body>
+  <div class="content">
+    <h1 class="site-title">Blogger</h1>
+
+
+    <% if(invalidCredentials) { %>
+      <div class="form-item">
+        <div class="warning-box">
+          <p>invalid username or password</p>
+        </div>
+      </div>
+    <% } %>
+
+    <form action="/login" method="post">
+      <div class="form-item">
+        <label for="email">Email Address</label>
+        <input type="email" name="email" placeholder="abc@email.com" value= <%=email%>>
+      </div>
+      <div class="form-item">
+        <label for="password">Password</label>
+        <input type="password" name="password" value= <%=password%>>
+      </div>
+      <input type="submit" value="login"/>
+    </form>
+  </div>
+</body>
+
+</html>
