@@ -109,7 +109,7 @@ app.get('/account', (req, res) => {
 const users = [{
   id: '41231vb23uyv4112y3v',
   email: 'rebosuravan@gmail.com',
-  password: 'fasfoifn23fasofina',
+  password: 'dasdasdwfgsefasf',
   name: {
     fname: 'Van Jacob',
     lname: 'Rebosura',
@@ -224,9 +224,20 @@ app.get('/posts/:postId', (req, res) => {
   }
 });
 
+// logout route
+
+app.post('/logout', (req, res) => {
+  if(isAuthenticated(req)) {
+    req.session.view = '';
+    res.redirect('/');
+  } else {
+    res.redirect('/');
+  }
+});
+
 function isAuthenticated(req) {
   let access = false;
-  if(req.session.view) {
+  if(req.session) {
     let view = req.session.view;
     users.forEach((user) => {
       if(view == user.activeSession) {
