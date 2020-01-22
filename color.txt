@@ -1,7 +1,0 @@
-indigo #342475
-yellow green #dcff4e
-orange pink #ff634e
-button color indigo #201647
-#2f2066
-hovered color #DCEDC8
-footer #6e4df5
