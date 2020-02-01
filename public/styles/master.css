@@ -1,5 +1,5 @@
 /* generic */
-html,body {
+html, body {
   background-color: #dcedc8;
   color: #000;
   font-family: 'Kreon', serif;
@@ -27,16 +27,13 @@ h1 {
   flex: 1 0 auto;
 }
 
-
-
 /* footer */
-
- footer {
+footer {
   background-color: #6e4df5;
   flex-shrink: 0;
 }
 
- p:first-child {
+p:first-child {
   padding-top: 0.5rem;
 }
 
@@ -70,6 +67,10 @@ footer a:hover {
 
 /* navigation */
 
+#nav {
+  transition: all .2s;
+}
+
 nav {
   background-color: #342475;
 }
@@ -89,10 +90,6 @@ nav .nav-item {
   margin: 0 1rem;
 }
 
-nav .nav-item.hidden {
-  display: none;
-}
-
 nav .nav-item a {
   color: #ff634e;
   text-decoration: none;
@@ -105,17 +102,15 @@ nav .nav-item a:hover {
 
 nav .nav-item .fas {
   color: #ff634e;
+  display: none;
 }
 
 /* body */
-
 .content {
   padding: 1.5rem 3rem;
 }
 
-
 /* forms */
-
 .form-item {
   width: 100%;
 }
@@ -132,7 +127,7 @@ nav .nav-item .fas {
   padding: 0.25rem;
 }
 
-.form-item input[type="text"]{
+.form-item input[type="text"] {
   font-size: 1.5rem;
 }
 
@@ -160,18 +155,29 @@ nav .nav-item .fas {
 }
 
 /* about */
-
 .section-content {
   font-size: 1.5rem;
 }
 
-
 @media screen and (max-width: 750px) {
-  nav .nav-item {
+  nav ul {
+    display: block;
+  }
+
+  #nav{
     display: none;
   }
 
-  nav .nav-item:last-of-type {
+  #nav.shown {
+    display: block;
+    position: static;
+  }
+
+  #nav .nav-item {
+    display: block;
+  }
+
+  nav .nav-item .fas {
     display: inline-block;
   }
 }
