@@ -1,7 +1,9 @@
 const express = require('express');
 const router = express.Router();
 
-const users = require(process.cwd() + '/db/users.js');
+const users = require(process.cwd() + '/modules/db/users.js');
+
+const isAuthenticated = require(process.cwd() + '/modules/security/AuthFunction').isAuthenticated;
 
 router.get('/', (req, res) => {
   if(isAuthenticated(req)) {
@@ -40,22 +42,22 @@ router.post('/', (req, res) => {
   }
 });
 
-function isAuthenticated(req) {
-  let access = false;
-  if(req.session) {
-    let view = req.session.view;
-    users.forEach((user) => {
-      if(view == user.activeSession) {
-        access = true;
-      }
-    });
-  } else {
-    return false;
-  }
-
-  if(access) {
-    return true;
-  }
-}
+// function isAuthenticated(req) {
+//   let access = false;
+//   if(req.session) {
+//     let view = req.session.view;
+//     users.forEach((user) => {
+//       if(view == user.activeSession) {
+//         access = true;
+//       }
+//     });
+//   } else {
+//     return false;
+//   }
+//
+//   if(access) {
+//     return true;
+//   }
+// }
 
 module.exports = router;
