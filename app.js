@@ -38,6 +38,7 @@ app.listen(port, (err) => {
 });
 
 // root route
+
 app.get('/', (req, res) => {
 
   let access = false;
@@ -86,6 +87,7 @@ app.get('/', (req, res) => {
 
 });
 
+
 // navigation routes
 
 app.get('/about', (req, res) => {
@@ -106,17 +108,20 @@ app.get('/account', (req, res) => {
 
 // TEMPORARY ACTING DB
 
-const users = [{
-  id: '41231vb23uyv4112y3v',
-  email: 'rebosuravan@gmail.com',
-  password: 'dasdasdwfgsefasf',
-  name: {
-    fname: 'Van Jacob',
-    lname: 'Rebosura',
-  },
-  activeSession: '',
-  posts: []
-}];
+// const users = [{
+//   id: '41231vb23uyv4112y3v',
+//   email: 'rebosuravan@gmail.com',
+//   password: 'dasdasdwfgsefasf',
+//   name: {
+//     fname: 'Van Jacob',
+//     lname: 'Rebosura',
+//   },
+//   activeSession: '',
+//   posts: []
+// }];
+
+const users = require(__dirname + '/db/users.js');
+
 
 
 app.post('/login', (req, res) => {
@@ -159,44 +164,40 @@ app.post('/login', (req, res) => {
 
 // compose route
 
-app.get('/compose', (req, res) => {
-  if(isAuthenticated(req)) {
-    res.render('compose');
-  } else {
-    res.redirect('/');
-  }
-});
+app.use('/compose', require(__dirname + '/routes/compose'));
+
+
 
 // post routes
 
-app.post('/post', (req, res) => {
-  if(isAuthenticated(req)) {
-    let date = Date.now();
-    let title = req.body.title;
-    let content = req.body.content;
-    let truncatedContent = content.substr(0, 100);
-    if(truncatedContent.length === 100) {
-      truncatedContent += '...';
-    }
-    users.forEach((user) => {
-      if(req.session.view == user.activeSession) {
-        let post = {
-          id: user.id + date,
-          author: user.id,
-          title: title,
-          content: content,
-          truncatedContent: truncatedContent,
-          date: date
-        }
-        user.posts.push(post);
-        console.log(post);
-      }
-    });
-    res.redirect('/');
-  } else {
-    res.redirect('/');
-  }
-});
+// app.post('/post', (req, res) => {
+//   if(isAuthenticated(req)) {
+//     let date = Date.now();
+//     let title = req.body.title;
+//     let content = req.body.content;
+//     let truncatedContent = content.substr(0, 100);
+//     if(truncatedContent.length === 100) {
+//       truncatedContent += '...';
+//     }
+//     users.forEach((user) => {
+//       if(req.session.view == user.activeSession) {
+//         let post = {
+//           id: user.id + date,
+//           author: user.id,
+//           title: title,
+//           content: content,
+//           truncatedContent: truncatedContent,
+//           date: date
+//         }
+//         user.posts.push(post);
+//         console.log(post);
+//       }
+//     });
+//     res.redirect('/');
+//   } else {
+//     res.redirect('/');
+//   }
+// });
 
 // view post route
 app.get('/posts/:postId', (req, res) => {
