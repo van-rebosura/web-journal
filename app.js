@@ -146,6 +146,7 @@ app.use('/compose', require(__dirname + '/routes/compose'));
 app.use('/posts', require(__dirname + '/routes/post'));
 
 // logout route
+// should be part of accounts route(?)
 app.post('/logout', (req, res) => {
   if(isAuthenticated(req)) {
     req.session.view = '';
