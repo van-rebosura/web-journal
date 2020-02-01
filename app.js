@@ -7,6 +7,7 @@ const bodyParser = require('body-parser');
 const ejs = require('ejs');
 const cookieSession = require('cookie-session');
 
+
 console.log('dotenv testing: ' + process.env.TESTING);
 
 // initializations
@@ -31,6 +32,11 @@ if (!port || port === null) {
   port = 3000;
 }
 
+
+const users = require(__dirname + '/modules/db/users.js');
+
+const isAuthenticated = require(__dirname + '/modules/security/AuthFunction').isAuthenticated;
+
 app.listen(port, (err) => {
   if (!err) {
     console.log('server started at port ' + port);
@@ -38,6 +44,7 @@ app.listen(port, (err) => {
 });
 
 // root route
+
 app.get('/', (req, res) => {
 
   let access = false;
@@ -63,15 +70,11 @@ app.get('/', (req, res) => {
   } else {
     console.log('no session');
 
-    let ejsVariables = {
-      email: '',
-      password: '',
-      invalidCredentials: false
-    }
+    access = false;
 
-    res.render('login', ejsVariables);
   }
 
+  // if no valid cookie found, redirect to login
   if (!access) {
 
     let ejsVariables = {
@@ -81,10 +84,10 @@ app.get('/', (req, res) => {
     }
 
     res.render('login', ejsVariables);
-
   }
 
 });
+
 
 // navigation routes
 
@@ -104,19 +107,7 @@ app.get('/account', (req, res) => {
   }
 });
 
-// TEMPORARY ACTING DB
 
-const users = [{
-  id: '41231vb23uyv4112y3v',
-  email: 'rebosuravan@gmail.com',
-  password: 'dasdasdwfgsefasf',
-  name: {
-    fname: 'Van Jacob',
-    lname: 'Rebosura',
-  },
-  activeSession: '',
-  posts: []
-}];
 
 
 app.post('/login', (req, res) => {
@@ -159,70 +150,14 @@ app.post('/login', (req, res) => {
 
 // compose route
 
-app.get('/compose', (req, res) => {
-  if(isAuthenticated(req)) {
-    res.render('compose');
-  } else {
-    res.redirect('/');
-  }
-});
+app.use('/compose', require(__dirname + '/routes/compose'));
 
-// post routes
 
-app.post('/post', (req, res) => {
-  if(isAuthenticated(req)) {
-    let date = Date.now();
-    let title = req.body.title;
-    let content = req.body.content;
-    let truncatedContent = content.substr(0, 100);
-    if(truncatedContent.length === 100) {
-      truncatedContent += '...';
-    }
-    users.forEach((user) => {
-      if(req.session.view == user.activeSession) {
-        let post = {
-          id: user.id + date,
-          author: user.id,
-          title: title,
-          content: content,
-          truncatedContent: truncatedContent,
-          date: date
-        }
-        user.posts.push(post);
-        console.log(post);
-      }
-    });
-    res.redirect('/');
-  } else {
-    res.redirect('/');
-  }
-});
+// post route
 
-// view post route
-app.get('/posts/:postId', (req, res) => {
-  console.log(req.params);
-  let access = false;
-  let postId = req.params.postId;
-  let ejsVariables = {};
-  if(isAuthenticated(req)) {
-    users.forEach((user) => {
-      user.posts.forEach((post) => {
-        if(post.id == postId) {
-          access = true;
-          ejsVariables.post = post;
-        }
-      });
-    });
-    if(access) {
-      res.render('post', ejsVariables);
-    } else {
-      console.log('/posts/:postId: 404');
-      res.redirect('/');
-    }
-  } else {
-    res.redirect('/');
-  }
-});
+app.use('/posts', require(__dirname + '/routes/post'));
+
+
 
 // logout route
 
@@ -234,21 +169,3 @@ app.post('/logout', (req, res) => {
     res.redirect('/');
   }
 });
-
-function isAuthenticated(req) {
-  let access = false;
-  if(req.session) {
-    let view = req.session.view;
-    users.forEach((user) => {
-      if(view == user.activeSession) {
-        access = true;
-      }
-    });
-  } else {
-    return false;
-  }
-
-  if(access) {
-    return true;
-  }
-}
