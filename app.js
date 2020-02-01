@@ -69,9 +69,7 @@ app.get('/', (req, res) => {
     });
   } else {
     console.log('no session');
-
     access = false;
-
   }
 
   // if no valid cookie found, redirect to login
@@ -87,7 +85,6 @@ app.get('/', (req, res) => {
   }
 
 });
-
 
 // navigation routes
 
@@ -106,9 +103,6 @@ app.get('/account', (req, res) => {
     res.redirect('/');
   }
 });
-
-
-
 
 app.post('/login', (req, res) => {
 
@@ -132,13 +126,10 @@ app.post('/login', (req, res) => {
   });
 
   if (access) {
-
     res.redirect('/');
-
   } else {
 
     // redirect back to login
-
     let ejsVariables = {
       email: inputEmail,
       password: inputPassword,
@@ -149,18 +140,12 @@ app.post('/login', (req, res) => {
 });
 
 // compose route
-
 app.use('/compose', require(__dirname + '/routes/compose'));
 
-
 // post route
-
 app.use('/posts', require(__dirname + '/routes/post'));
 
-
-
 // logout route
-
 app.post('/logout', (req, res) => {
   if(isAuthenticated(req)) {
     req.session.view = '';

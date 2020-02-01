@@ -1,4 +1,5 @@
- html,body {
+/* generic */
+html,body {
   background-color: #dcedc8;
   color: #000;
   font-family: 'Kreon', serif;
@@ -25,6 +26,8 @@ h1 {
 .content {
   flex: 1 0 auto;
 }
+
+
 
 /* footer */
 
@@ -86,6 +89,10 @@ nav .nav-item {
   margin: 0 1rem;
 }
 
+nav .nav-item.hidden {
+  display: none;
+}
+
 nav .nav-item a {
   color: #ff634e;
   text-decoration: none;
@@ -94,6 +101,10 @@ nav .nav-item a {
 
 nav .nav-item a:hover {
   color: #fff;
+}
+
+nav .nav-item .fas {
+  color: #ff634e;
 }
 
 /* body */
@@ -152,4 +163,15 @@ nav .nav-item a:hover {
 
 .section-content {
   font-size: 1.5rem;
+}
+
+
+@media screen and (max-width: 750px) {
+  nav .nav-item {
+    display: none;
+  }
+
+  nav .nav-item:last-of-type {
+    display: inline-block;
+  }
 }
