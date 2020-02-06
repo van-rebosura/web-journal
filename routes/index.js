@@ -70,12 +70,14 @@ router.get('/account', (req, res) => {
 // logout route
 router.post('/logout', (req, res) => {
   if(isAuthenticated(req)) {
-    req.session.view = '';
+    logout(req);
     res.redirect('/');
   } else {
     res.redirect('/');
   }
 });
+
+
 
 // login route
 router.post('/login', (req, res) => {
@@ -119,7 +121,13 @@ router.post('/login', (req, res) => {
 // register route
 
 router.get('/register', (req, res) => {
+  //when user explicitly attempts to get to register page, log the account out.
+  logout(req);
   res.render('register');
 });
+
+function logout(req){
+  req.session.view = "";
+}
 
 module.exports = router;
