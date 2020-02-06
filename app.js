@@ -44,7 +44,6 @@ app.use('/compose', require(__dirname + '/routes/compose'));
 
 // post route
 app.use('/posts', require(__dirname + '/routes/post'));
-<<<<<<< HEAD
 
 
 
@@ -64,5 +63,3 @@ app.post('/logout', (req, res) => {
 app.get('/register', (req, res) => {
   res.render('register');
 });
-=======
->>>>>>> modular
