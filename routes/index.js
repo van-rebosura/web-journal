@@ -77,6 +77,7 @@ router.post('/logout', (req, res) => {
   }
 });
 
+// login route
 router.post('/login', (req, res) => {
 
   inputEmail = req.body.email;
@@ -113,6 +114,12 @@ router.post('/login', (req, res) => {
     }
     res.render('login', ejsVariables);
   }
+});
+
+// register route
+
+router.get('/register', (req, res) => {
+  res.render('register');
 });
 
 module.exports = router;

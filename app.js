@@ -44,22 +44,3 @@ app.use('/compose', require(__dirname + '/routes/compose'));
 
 // post route
 app.use('/posts', require(__dirname + '/routes/post'));
-
-
-
-// logout route
-
-app.post('/logout', (req, res) => {
-  if(isAuthenticated(req)) {
-    req.session.view = '';
-    res.redirect('/');
-  } else {
-    res.redirect('/');
-  }
-});
-
-// register route
-
-app.get('/register', (req, res) => {
-  res.render('register');
-});
