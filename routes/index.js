@@ -1,46 +1,11 @@
-// jshint esversion:6
-
-// dependencies
-const dotenv = require('dotenv').config({ path: __dirname + '/keys/.env' });
 const express = require('express');
-const bodyParser = require('body-parser');
-const ejs = require('ejs');
-const cookieSession = require('cookie-session');
+const router = express.Router();
 
-console.log('dotenv testing: ' + process.env.TESTING);
+const users = require(process.cwd() + '/modules/db/users.js');
 
-// initializations
-const app = express();
+const isAuthenticated = require(process.cwd() + '/modules/security/AuthFunction.js').isAuthenticated;
 
-app.use(bodyParser.urlencoded({
-  extended: true
-}));
-
-app.set('view engine', 'ejs');
-
-app.use(cookieSession({
-  name: 'session',
-  secret: 'secret key'
-}));
-
-app.use(express.static(__dirname + '/public'));
-
-// heroku dynamic port
-let port = (process.env.PORT) ? process.env.PORT : 3000;
-
-const users = require(__dirname + '/modules/db/users.js');
-
-app.listen(port, (err) => {
-  if (!err) {
-    console.log('server started at port ' + port);
-  }
-});
-
-<<<<<<< HEAD
-// root route
-
-app.get('/', (req, res) => {
-
+router.get('/', (req, res) => {
   let access = false;
 
   if (req.session.view) {
@@ -63,7 +28,9 @@ app.get('/', (req, res) => {
     });
   } else {
     console.log('no session');
+
     access = false;
+
   }
 
   // if no valid cookie found, redirect to login
@@ -77,20 +44,19 @@ app.get('/', (req, res) => {
 
     res.render('login', ejsVariables);
   }
-
 });
 
 // navigation routes
 
-app.get('/about', (req, res) => {
+router.get('/about', (req, res) => {
   res.render('about');
 });
 
-app.get('/contact', (req, res) => {
+router.get('/contact', (req, res) => {
   res.render('contact');
 });
 
-app.get('/account', (req, res) => {
+router.get('/account', (req, res) => {
   if(isAuthenticated(req)) {
     res.render('account');
   } else {
@@ -98,7 +64,23 @@ app.get('/account', (req, res) => {
   }
 });
 
-app.post('/login', (req, res) => {
+
+// account access
+
+// logout route
+router.post('/logout', (req, res) => {
+  if(isAuthenticated(req)) {
+    logout(req);
+    res.redirect('/');
+  } else {
+    res.redirect('/');
+  }
+});
+
+
+
+// login route
+router.post('/login', (req, res) => {
 
   inputEmail = req.body.email;
   inputPassword = req.body.password;
@@ -120,10 +102,13 @@ app.post('/login', (req, res) => {
   });
 
   if (access) {
+
     res.redirect('/');
+
   } else {
 
     // redirect back to login
+
     let ejsVariables = {
       email: inputEmail,
       password: inputPassword,
@@ -132,27 +117,17 @@ app.post('/login', (req, res) => {
     res.render('login', ejsVariables);
   }
 });
-=======
-// root route and navigation routes
-app.use('/', require(__dirname + '/routes/index'));
->>>>>>> c2ff3273b3485d6ea3e3d3cfba38b50fef580818
 
-// compose route
-app.use('/compose', require(__dirname + '/routes/compose'));
+// register route
 
-// post route
-app.use('/posts', require(__dirname + '/routes/post'));
-<<<<<<< HEAD
-
-// logout route
-// should be part of accounts route(?)
-app.post('/logout', (req, res) => {
-  if(isAuthenticated(req)) {
-    req.session.view = '';
-    res.redirect('/');
-  } else {
-    res.redirect('/');
-  }
+router.get('/register', (req, res) => {
+  //when user explicitly attempts to get to register page, log the account out.
+  logout(req);
+  res.render('register');
 });
-=======
->>>>>>> c2ff3273b3485d6ea3e3d3cfba38b50fef580818
+
+function logout(req){
+  req.session.view = "";
+}
+
+module.exports = router;
