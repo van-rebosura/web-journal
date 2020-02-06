@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+
+<head>
+  <meta charset="utf-8">
+  <title>Blogger login</title>
+  <!-- google fonts -->
+  <link href="https://fonts.googleapis.com/css?family=Kreon|Poppins|Ultra&display=swap" rel="stylesheet">
+  <!-- custom css -->
+  <link rel="stylesheet" href="styles/login.css">
+  <link rel="stylesheet" href="styles/register.css">
+</head>
+
+<body>
+  <div class="content-register">
+    <h1 class="site-title flex-item">Blogger</h1>
+
+    <form class="form-register flex-item" action="/register" method="post">
+      <div class="form-item">
+        <label for="email">Email Address</label>
+        <input type="email" name="email" placeholder="abc@email.com">
+      </div>
+      <div class="form-item">
+        <label for="firstName">First Name</label>
+        <input type="text" name="firstName">
+      </div>
+      <div class="form-item">
+        <label for="lastName">Last Name</label>
+        <input type="text" name="lastName">
+      </div>
+      <div class="form-item">
+        <label for="password">Password</label>
+        <input type="password" name="password">
+      </div>
+      <div class="form-item">
+        <label for="password2">Confirm Password</label>
+        <input type="password" name="password2">
+      </div>
+      <p class="info">Already have an account? Login <a href="/">here.</a></p>
+      <input type="submit" value="register" />
+    </form>
+  </div>
+</body>
+
+</html>
