@@ -1,11 +1,7 @@
-let registerButton = document.querySelector('input[type="submit"]');
-
-// registerButton.addEventListener('click', validateFields);
-
+const PASSWORD_LENGTH = 8;
+const STRING_BLANK = '';
 
 function validateFields() {
-
-
 
   let errors = [];
   const form = document.querySelector('form');
@@ -16,37 +12,41 @@ function validateFields() {
   let password2 = document.querySelector('input[name="password2"]').value;
 
   // check email
-
   let reEmail = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-
-  if(email === '') {
+  if (email === STRING_BLANK) {
     let error = createError('email field is required');
     errors.push(error);
   }
 
-  if(!reEmail.test(email)) {
-    let error = createError('Invalid email');
+  if (!reEmail.test(email)) {
+    let error = createError('invalid email');
     errors.push(error);
   }
 
   // check name
-  if(firstName === '' || lastName === '') {
-    let error = createError('Both name fields are required');
+  if (firstName === STRING_BLANK || lastName === STRING_BLANK) {
+    let error = createError('name fields are required');
     errors.push(error);
   }
 
   // check password
-  if(password === '') {
+  if (password === '') {
     let error = createError('password cannot be blank');
     errors.push(error);
   }
 
-  if(password !== password2 || password === '' || password2 === '') {
+  if (password !== password2) {
     let error = createError('passwords do not match');
     errors.push(error);
   }
 
-  if(errors) {
+  if(password.length < PASSWORD_LENGTH) {
+    let error = createError('password must consist of 8 characters or longer');
+    errors.push(error);
+  }
+
+  if (errors) {
+    // event.returnValue is an IE fix.
     event.preventDefault ? event.preventDefault() : (event.returnValue = false);
     renderErrors(errors, form);
   }
@@ -55,12 +55,14 @@ function validateFields() {
 
 }
 
+// this function returns an error object
 function createError(errorMsg) {
   return {
     message: errorMsg
   };
 }
 
+// this function will create and show p elements to the div with class "error-div" for each error
 function renderErrors(errors, form) {
 
   // clear old errors
@@ -68,19 +70,23 @@ function renderErrors(errors, form) {
 
   let errorDiv = document.querySelector('.error-div');
 
-
   for (let i = 0; i < errors.length; i++) {
-        let node = document.createElement('p');
-        node.innerHTML = errors[i].message;
-        errorDiv.appendChild(node);
+    let node = createErrorElement(errors[i].message);
+    errorDiv.appendChild(node);
   }
-
 }
 
+function createErrorElement(errorMessage) {
+  let node = document.createElement('p');
+  node.innerHTML = errorMessage;
+  node.classList.add('error');
+  return node;
+}
+
+// removes all errors in the div with class "error-div"
 function clearErrors(form) {
   let errorDiv = document.querySelector('.error-div').children;
-  // console.log(errorDiv);
-  for(let i = 0; i < errorDiv.length; i++) {
+  for (let i = 0; i < errorDiv.length; i++) {
     let child = errorDiv[i];
     child.parentNode.removeChild(child);
   }
