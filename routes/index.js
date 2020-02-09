@@ -123,7 +123,10 @@ router.post('/login', (req, res) => {
 router.get('/register', (req, res) => {
   //when user explicitly attempts to get to register page, log the account out.
   logout(req);
-  res.render('register');
+  let ejsOptions = {
+    errors: null
+  }
+  res.render('register', ejsOptions);
 });
 
 function logout(req){
