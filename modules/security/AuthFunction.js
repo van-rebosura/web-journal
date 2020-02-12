@@ -1,20 +1,14 @@
+const mongoose = require('mongoose');
+
 const users = require(process.cwd() + '/modules/db/users');
 
+const userModel = require(process.cwd() + '/models/User.js').User;
+
 function isAuthenticated(req) {
-  let access = false;
-  if(req.session) {
-    let view = req.session.view;
-    users.forEach((user) => {
-      if(view == user.activeSession) {
-        access = true;
-      }
-    });
+  if(req.session.view) {
+    return true;
   } else {
     return false;
-  }
-
-  if(access) {
-    return true;
   }
 }
 

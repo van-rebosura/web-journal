@@ -1,49 +1,89 @@
 const express = require('express');
+const mongoose = require('mongoose');
 const router = express.Router();
 
 const users = require(process.cwd() + '/modules/db/users.js');
 
+const userModel = require(process.cwd() + '/models/User.js').User;
+
 const isAuthenticated = require(process.cwd() + '/modules/security/AuthFunction.js').isAuthenticated;
 
 router.get('/', (req, res) => {
-  let access = false;
+let access = isAuthenticated(req);
+console.log(access);
+  if(access) {
 
-  if (req.session.view) {
-    console.log('session found, session id: ' + req.session.view);
+    console.log('index.js /(): session hit!');
+    userModel.findOne({session: req.session.view}, (err, result) => {
+      let ejsVariables = {
+        fullName: result.firstName + " " + result.lastName,
+        posts: result.posts
+      };
 
-    let view = req.session.view;
-    users.forEach((user) => {
-      if (view === user.activeSession) {
-        console.log('/ root: found session');
-
-        let ejsVariables = {
-          fullName: user.name.fname + ' ' + user.name.lname,
-          posts: user.posts
-        }
-
-        res.render('dashboard', ejsVariables);
-
-        access = true;
-      }
+      res.render('dashboard', ejsVariables);
     });
   } else {
-    console.log('no session');
+        let ejsVariables = {
+          email: '',
+          password: '',
+          invalidCredentials: false
+        }
 
-    access = false;
-
+        res.render('login', ejsVariables);
   }
 
-  // if no valid cookie found, redirect to login
-  if (!access) {
-
-    let ejsVariables = {
-      email: '',
-      password: '',
-      invalidCredentials: false
-    }
-
-    res.render('login', ejsVariables);
-  }
+  // let access = false;
+  //
+  // if (req.session.view) {
+  //   console.log('session found, session id: ' + req.session.view);
+  //
+  //   let view = req.session.view;
+  //   // users.forEach((user) => {
+  //   //   if (view === user.activeSession) {
+  //   //     console.log('/ root: found session');
+  //   //
+  //   //     let ejsVariables = {
+  //   //       fullName: user.name.fname + ' ' + user.name.lname,
+  //   //       posts: user.posts
+  //   //     }
+  //   //
+  //   //     res.render('dashboard', ejsVariables);
+  //   //
+  //   //     access = true;
+  //   //   }
+  //   // });
+  //
+  //   userModel.findOne({session: view}, (err, result) => {
+  //     if(err) console.log(err);
+  //     else if(result) {
+  //       console.log("login hit!");
+  //       let ejsVariables = {
+  //         fullName: result.firstName + " " + result.lastName,
+  //         posts: result.posts
+  //       }
+  //       res.render('dashboard', ejsVariables);
+  //     } else {
+  //       console.log('index.js: invalid');
+  //     }
+  //   });
+  // } else {
+  //   console.log('no session');
+  //
+  //   access = false;
+  //
+  // }
+  //
+  // // if no valid cookie found, redirect to login
+  // if (!access) {
+  //
+  //   let ejsVariables = {
+  //     email: '',
+  //     password: '',
+  //     invalidCredentials: false
+  //   }
+  //
+  //   res.render('login', ejsVariables);
+  // }
 });
 
 // navigation routes
@@ -57,7 +97,7 @@ router.get('/contact', (req, res) => {
 });
 
 router.get('/account', (req, res) => {
-  if(isAuthenticated(req)) {
+  if (isAuthenticated(req)) {
     res.render('account');
   } else {
     res.redirect('/');
@@ -69,15 +109,13 @@ router.get('/account', (req, res) => {
 
 // logout route
 router.post('/logout', (req, res) => {
-  if(isAuthenticated(req)) {
+  if (isAuthenticated(req)) {
     logout(req);
     res.redirect('/');
   } else {
     res.redirect('/');
   }
 });
-
-
 
 // login route
 router.post('/login', (req, res) => {
@@ -89,33 +127,58 @@ router.post('/login', (req, res) => {
 
   let userId = '';
 
-  users.forEach((user) => {
-    if (user.email === inputEmail && user.password === inputPassword) {
-      userId = user.id;
-      access = true;
+  userModel.findOne({email: inputEmail, password: inputPassword}, (err, findResult) => {
+    if(err) console.log(err);
+    else if(findResult) {
+      console.log('authenticated');
       let date = Date.now();
-      console.log('/login access granted date: ' + date);
-      req.session.view = date + userId;
-      console.log('/login session: ' + req.session.view);
-      user.activeSession = req.session.view;
+      req.session.view = date + findResult._id;
+
+      userModel.findOneAndUpdate({email: inputEmail}, {session: req.session.view}, (err, updateResult) => {
+        if(err) console.log(err);
+        else if(updateResult) {
+          console.log('update success');
+          res.redirect('/');
+        } else {
+            let ejsVariables = {
+              email: inputEmail,
+              password: inputPassword,
+              invalidCredentials: true
+            }
+            res.render('login', ejsVariables);
+        }
+      });
     }
   });
 
-  if (access) {
-
-    res.redirect('/');
-
-  } else {
-
-    // redirect back to login
-
-    let ejsVariables = {
-      email: inputEmail,
-      password: inputPassword,
-      invalidCredentials: true
-    }
-    res.render('login', ejsVariables);
-  }
+  // userModel.findOne({
+  //   email: inputEmail,
+  //   password: inputPassword
+  // }, (err, result) => {
+  //   if (err) {
+  //     console.log(err);
+  //   } else if (result) {
+  //     console.log("authenticated");
+  //     access = true;
+  //     let date = Date.now();
+  //     req.session.view = date + result._id;
+  //
+  //     userModel.findOneAndUpdate({email: inputEmail}, {session: req.session.view}, (err, updateResult) => {
+  //       if(err) console.log(err);
+  //       else {
+  //         res.redirect('/');
+  //       }
+  //     });
+  //
+  //   } else {
+  //     let ejsVariables = {
+  //       email: inputEmail,
+  //       password: inputPassword,
+  //       invalidCredentials: true
+  //     }
+  //     res.render('login', ejsVariables);
+  //   }
+  // });
 });
 
 // register route
@@ -129,7 +192,47 @@ router.get('/register', (req, res) => {
   res.render('register', ejsOptions);
 });
 
-function logout(req){
+// this function returns an error object
+function createError(errorMsg) {
+  return {
+    message: errorMsg
+  };
+}
+
+
+router.post('/register', (req, res) => {
+  let errors = [];
+
+  let User = require(process.cwd() + '/models/User.js').User;
+  let createUser = require(process.cwd() + '/models/User.js').createUser;
+
+  User.findOne({
+    email: req.body.email
+  }, (err, foundItem) => {
+    if (err) console.log(err);
+    else if (foundItem) {
+      let error = createError('email is already registered');
+      console.log(error);
+      errors.push(error);
+    } else {
+      let user = createUser(req.body.email, req.body.password, req.body.firstName, req.body.lastName, req.body.password);
+      user.save();
+    }
+  });
+
+  console.log('we are here');
+
+
+  if (errors.length !== 0) {
+    console.log('we have errors');
+    let ejsOptions = {
+      errors
+    };
+    res.render('register', ejsOptions);
+  }
+});
+
+function logout(req) {
   req.session.view = "";
 }
 

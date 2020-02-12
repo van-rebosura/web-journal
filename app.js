@@ -1,11 +1,14 @@
 // jshint esversion:6
 
 // dependencies
-const dotenv = require('dotenv').config({ path: __dirname + '/keys/.env' });
+const dotenv = require('dotenv').config({
+  path: __dirname + '/keys/.env'
+});
 const express = require('express');
 const bodyParser = require('body-parser');
 const ejs = require('ejs');
 const cookieSession = require('cookie-session');
+const mongoose = require('mongoose');
 
 console.log('dotenv testing: ' + process.env.TESTING);
 
@@ -28,7 +31,16 @@ app.use(express.static(__dirname + '/public'));
 // heroku dynamic port
 let port = (process.env.PORT) ? process.env.PORT : 3000;
 
-const users = require(__dirname + '/modules/db/users.js');
+// mongodb
+let mongoDbOptions = {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+}
+
+let connection = mongoose.connect('mongodb://localhost/bloggerDB', mongoDbOptions, (err) => {
+  (err) ? console.log(err): console.log('connected to db successfully');
+});
+
 
 app.listen(port, (err) => {
   if (!err) {

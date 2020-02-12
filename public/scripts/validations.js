@@ -45,13 +45,11 @@ function validateFields() {
     errors.push(error);
   }
 
-  if (errors) {
+  if (errors.length !== 0) {
     // event.returnValue is an IE fix.
     event.preventDefault ? event.preventDefault() : (event.returnValue = false);
     renderErrors(errors, form);
   }
-
-  event.preventDefault();
 
 }
 
